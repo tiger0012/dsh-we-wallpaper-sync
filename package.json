@@ -1,0 +1,22 @@
+{
+  "name": "dsh-we-wallpaper-sync",
+  "version": "0.1.0",
+  "description": "把 Wallpaper Engine（小红车，Steam 431960）创意工坊壁纸浏览、搜索、下载并接入 DSH 皮肤中心的可复用技能。",
+  "type": "module",
+  "publishConfig": { "access": "public" },
+  "dsh": {
+    "engines": { "dsh": ">=0.1.1-rc.1" },
+    "bundle": { "patch": "./cordis.patch.yml" },
+    "client": { "platform": "web", "inject": [] }
+  },
+  "files": [
+    "SKILL.md",
+    "skills/",
+    "references/",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": ["dsh", "deepseek-harness", "dsh-plugin", "dsh-skill", "wallpaper-engine", "steam", "we", "skin"],
+  "license": "MIT"
+}
