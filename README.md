@@ -1,6 +1,6 @@
 # dsh-we-wallpaper-sync
 
-把 Wallpaper Engine（小红车/小红书壁纸，Steam 应用 `431960`）创意工坊壁纸批量**浏览、搜索、下载并接入 DSH 皮肤中心**的可复用技能。
+把 Wallpaper Engine（小红车壁纸，Steam 应用 `431960`）创意工坊壁纸批量**浏览、搜索、下载并接入 DSH 皮肤中心**的可复用技能。
 
 ## 它能做什么
 

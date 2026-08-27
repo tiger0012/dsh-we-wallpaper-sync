@@ -1,6 +1,6 @@
 ---
 name: dsh-we-wallpaper-sync
-description: '用于 Agent 把 Wallpaper Engine（小红车/小红书壁纸，Steam 应用 431960）创意工坊壁纸批量浏览、搜索、下载并接入 DSH 皮肤中心：覆盖 Steam Web API 搜索、steamcmd+Docker 下载、绕过国内 Steam HTTP 封锁与「账号常住地与登录 IP 不符」的异地登录拦截、落盘到 ~/Steam/steamapps、把库根目录写进 settings.yaml 让皮肤中心 WE 桥扫描、以及 inventory 验证。'
+description: '用于 Agent 把 Wallpaper Engine（小红车，Steam 应用 431960）创意工坊壁纸批量浏览、搜索、下载并接入 DSH 皮肤中心：覆盖 Steam Web API 搜索、steamcmd+Docker 下载、绕过国内 Steam HTTP 封锁与「账号常住地与登录 IP 不符」的异地登录拦截、落盘到 ~/Steam/steamapps、把库根目录写进 settings.yaml 让皮肤中心 WE 桥扫描、以及 inventory 验证。'
 ---
 
 # dsh-we-wallpaper-sync
@@ -108,12 +108,11 @@ curl -s http://127.0.0.1:3080/api/skin-center/we/inventory
 | `Timed out waiting for confirmation` | App 确认窗口(约 2min)过了 | 重试并提前让用户拿好手机；或用 TOTP 验证码 |
 | `steamcmd.sh not found` | 空目录覆盖了容器内 steamcmd 目录 | 不要挂载覆盖 `/root/.local/share/Steam/steamcmd`；改用 `+force_install_dir` |
 | `steamworkshopdownloader.io` 返回 500 | 第三方后端不可靠 | 弃用，用 steamcmd 官方通道 |
-| `Insufficient Balance` | 调用的模型 API 账户余额不足 | 充值或换有余量的 key（与技能/代码无关） |
 
-## 相关脚本（本机 workspace 参考）
+## 相关脚本（随 skill 打包在 `references/`）
 
-- `we_download.sh`：steamcmd+Docker 批量下载（含代理 steam.cfg、force_install_dir）。
-- `workshop_search.py`：QueryFiles/GetPublishedFileDetails 搜索（curl 子进程，走代理）。
-- `workshop_browse.py`：抓列表→取详情→下载预览→拼编号网格图。
+- `references/we_download.sh`：steamcmd+Docker 批量下载（含代理 steam.cfg、force_install_dir；凭证来自环境变量 `STEAM_USER` / `DSH_WE_PROXY`）。
+- `references/workshop_search.py`：QueryFiles/GetPublishedFileDetails 搜索（curl 子进程，走代理；Key/代理来自 `DSH_WE_API_KEY` / `DSH_WE_PROXY`）。
+- `references/workshop_browse.py`：抓列表→取详情→下载预览→拼编号网格图，把结果发给用户挑选。
 
-将 `<KEY>`/`<密码>`/`<账号>` 替换为实际值；**勿在技能文件里硬编码 API Key 或密码**。
+先 `export DSH_WE_PROXY=socks5h://<代理IP>:<端口> DSH_WE_API_KEY=<key>` 再调用（或对 `we_download.sh` 另设 `STEAM_USER`）。**勿在技能文件里硬编码 API Key / 密码 / 账号 / 代理细节——一律用环境变量或占位符**。
