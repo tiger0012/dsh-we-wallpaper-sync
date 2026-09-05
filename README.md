@@ -22,7 +22,7 @@
 安装后调用技能 `dsh-we-wallpaper-sync`，按其步骤执行；也可直接读取 `SKILL.md` 里的命令。
 
 > ⚠️ 技能内用 `<账号>`/`<KEY>`/`<密码>` 占位，**勿硬编码** Steam API Key 或密码。
-> ⚠️ `cordis.patch.yml` 里的 `customSkillDirs` 路径需按安装后的实际绝对路径调整（见该文件注释），或由维护者/DSH 技能提供方接线。
+> ✅ `cordis.patch.yml` 的 `customSkillDirs` 用 `!!js` 在装载时基于 `loader.filename` 动态解析出包内 `skills/` 绝对路径——无论装到哪个 profile 都能自动定位，**无需手动改配置**。
 
 ## 市场条目
 

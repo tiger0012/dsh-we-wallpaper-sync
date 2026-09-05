@@ -1,9 +1,9 @@
 # 注册本 bundle 携带的技能到 DSH 技能系统。
-# 重要：安装后本包位于 <profile>/node_modules/dsh-we-wallpaper-sync/，
-# customSkillDirs 需指向该目录下的 skills/。因为该路径因安装布局而异，
-# 静态补丁无法预知绝对路径——请按实际安装路径调整，或由维护者在评审时接线。
-# 未生效时也可整体保留技能文件，由 DSH 的技能文件系统提供方通过
-# DSH_BUNDLED_SKILL_DIR 或自定义根发现。
+#
+# 关键：customSkillDirs 用 !!js 表达式在装载时基于 loader.filename / baseUrl 动态
+# 解析出「本包在 <profile>/node_modules/dsh-we-wallpaper-sync/skills」的绝对路径，
+# 因此无论安装到哪个 profile、哪种布局都能解析，无需用户手工改配置。
+# （同 @volcengine/ark-managed-agents 的 loader.filename + createRequire 手法。）
 - insert:
     - id: dsh-we-wallpaper-sync-skill
       name: '@deepseek-ai/dsh-skill-filesystem'
@@ -11,4 +11,23 @@
         providerName: dsh-we-wallpaper-sync
         includeDefaultRoots: false
         customSkillDirs:
-          - ./skills   # ← 请改成 <profile>/node_modules/dsh-we-wallpaper-sync/skills
+          - !!js >-
+              (function(){
+                var M = process.getBuiltinModule('node:module');
+                var path = process.getBuiltinModule('node:path');
+                var anchors = [];
+                try { if (typeof baseUrl!=='undefined' && baseUrl) anchors.push(baseUrl); } catch(e){}
+                try { if (typeof loader!=='undefined' && loader && loader.filename) anchors.push(loader.filename); } catch(e){}
+                try { if (typeof loader!=='undefined' && loader && loader.url) anchors.push(loader.url); } catch(e){}
+                try { anchors.push(dshHomePath('profiles','web','package.json')); } catch(e){}
+                try { anchors.push(process.cwd()+'/'); } catch(e){}
+                var spec = 'dsh-we-wallpaper-sync/package.json';
+                var last;
+                for (var i=0;i<anchors.length;i++){
+                  try {
+                    var root = path.dirname(M.createRequire(anchors[i]).resolve(spec));
+                    return path.join(root, 'skills');
+                  } catch(e){ last = e; }
+                }
+                throw new Error('dsh-we-wallpaper-sync: cannot resolve skills dir from ' + anchors.join(',') + (last ? (': ' + last) : ''));
+              })()
